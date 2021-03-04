@@ -3,9 +3,9 @@ import requests
 import time
 
 # unfamiliar_skill = input('>')
-
+url = 'https://translate.google.co.kr/?sl=en&tl=ko&text=inclined&op=translate'
 # def find_jobs():
-html_text = requests.get('https://translate.google.co.kr/?sl=en&tl=ko&text=inclined&op=translate')
+html_text = requests.get(url)
 soup = BeautifulSoup(html_text.content, 'lxml')
 work = soup.find('c-wiz', class_ = 'zQTmif SSPGKf RvYhPd BIdYQ aL9XFd')
 work2 = work.find('div', class_ = 'T4LgNb')
