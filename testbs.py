@@ -11,15 +11,19 @@ work = soup.find('c-wiz', class_ = 'zQTmif SSPGKf RvYhPd BIdYQ aL9XFd')
 work2 = work.find('div', class_ = 'T4LgNb')
 work3 = work2.find('div', class_ = 'WFnNle')
 work4 = work3.find('c-wiz', class_ = 'MOkH4e BSw7K iYelWb LUoOL')
+
+
+
 work5 = work4.find('div', class_ = 'OlSOob')
 work6 = work5.find('c-wiz', class_ = 'QsA0jb')
 work7 = work6.find('div', class_ = 'kGmWO')
 work8 = work7.find('c-wiz', class_ = 'zpzJBc')
 # Parser to section
 # ref. https://stackoverflow.com/questions/45036358/beautifulsoup-is-not-reading-the-section-tags-as-expected
-work9 = work8.find('section', aria-labelledby = 'rdwk3')
+# https://stackoverflow.com/questions/8049520/web-scraping-javascript-page-with-python
+# work9 = work8.find('section', aria-labelledby = 'rdwk3')
 
-print(work9)
+print(work8.get_text)
 # for index, job enumerate(jobs):
 #     published_date = job.find('span', class_ = 'sim-posted').span.text
 #     if 'few' in published_date:
