@@ -53,15 +53,11 @@ def enterDay():
 			return int(day)
 	except ValueError:
 		return 0
-
 def enterType():
-	print(f"################################")
-	print(f"##########GRE WORD TEST#########")
-	print(f"################################")
 	print(f"1. New word 2. Wrong word 3.Research word(Preparing Service)")
-	print(f"--------------------------")
+	print(f"---------------------------------------------")
 	answer = input("Enter which type: ")
-	print(f"--------------------------")
+	print(f"---------------------------------------------")
 	try:
 		if answer == "exit":
 			return "exit"
@@ -104,6 +100,7 @@ def processtxt(data):
 
 def saveWord(data_dict, problem_list, count):
 	data_dict[count] = problem_list
+	data_dict[count].append(1)
 
 def printProblem(data_list):
 	print(f"--------QUIZ, DAY {data_list[0][0]}--------")
@@ -113,50 +110,75 @@ def printProblem(data_list):
 	while(True):
 		ans = input("YOU KNOW ALL?(y or n): ")
 		if (ans=="y")|(ans=="n"):break
+		if (ans=="exit"):break
 		else:
 			print("error: wrong input")
 
 	return ans
 
 def printNonSolvedWord(data_dict):
-	if(len(data_dict)):
-		print(f"NON PROBLEM: GREAT JOB!!!")
+
+	if(len(data_dict)==0):
 		return 0
 	elif(len(data_dict)==1):pNumber = 1
 	else:
 		pNumber = np.random.randint(1, len(data_dict))
 
 	data_list = data_dict[pNumber]
+
 	print(f"--------QUIZ, DAY {data_list[0][0]}--------")
 	for val in data_list:
+		if(type(val)==int):continue
 		print(val[1])
 	print(f"---------------------------------------------")
+
 	while(True):
 		ans = input("YOU KNOW ALL?(y or n): ")
 		if (ans=="y")|(ans=="n"):break
+		if (ans=="exit"):break
 		else:
 			print("error: wrong input")
-	return ans, data_list
+
+	return [ans, pNumber]
 
 def printAnswer(data_list):
 	print(f"--------Answer, DAY {data_list[0][0]}--------")
 	for val in data_list:
+		if(type(val) == int):continue
 		print(f"{val[1]} -> {val[2]}")
 	print(f"---------------------------------------------")
+
+def addWeightWord(data_dict, index):
+	data_dict[index][-1] = data_dict[index][-1]+1
+
+def removeWord(data_dict, index):
+	del data_dict[index]
+
+def subtractWeightWord(nonSolvedWord, index):
+	if(nonSolvedWord[index][-1] == 1):removeWord(nonSolvedWord, index)
+	else:
+		nonSolvedWord[index][-1] = nonSolvedWord[index][-1] - 1
 
 def main():
 	# https://realpython.com/python-timer/
 	tic = time.perf_counter()
 
 	nonSolvedWord = {}
-	count = 0
+	count = 1
 	f = open("./1.txt",  encoding='utf-8')
 	data = processtxt(f.read())
 
 	while(True):
+		print(f"---------------------------------------------")
+		print(f"|				GRE WORD TEST				|")
+		print(f"---------------------------------------------")
+
 		problemType = enterType()
 		if (problemType == "exit"): break
 		if problemType == 1:
+			if len(nonSolvedWord) > 10:
+				print(f"Please solve the probelm...")
+				problemType = 2
 			day = enterDay()
 			if (day == "exit"): break
 
@@ -171,23 +193,30 @@ def main():
 
 				answer = printProblem(problem_list)
 				answer = str(answer)
+				if(answer=='exit'):break
 				if(answer=='y'):
-					nonSolvedWord[count] = problem_list
+					continue
 				elif(answer=='n'):
 					saveWord(nonSolvedWord, problem_list, count)
 					printAnswer(problem_list)
 					count = count+1
-		elif problemType == 2:
-			print("HELLO REVIEW WORLD")
-			answer, data_list = printNonSolvedWord(nonSolvedWord)
-			answer = str(answer)
 
-			if (answer == 'y'):
-				nonSolvedWord[count] = problem_list
+		elif problemType == 2:
+			if len(nonSolvedWord) < 1:
+				print(f"NON PROBLEM: GREAT JOB!!!")
+				continue
+			print("HELLO REVIEW WORLD")
+			ans_list = printNonSolvedWord(nonSolvedWord)
+			answer = ans_list[0]
+			index = ans_list[1]
+			answer = str(answer)
+			if (answer == 'exit'): break
+			elif (answer == 'y'):
+				subtractWeightWord(nonSolvedWord, index)
+				continue
 			elif (answer == 'n'):
-				# addWeightWord(nonSolvedWord, index, count)
-				printAnswer(problem_list)
-				count = count + 1
+				addWeightWord(nonSolvedWord, index)
+				printAnswer(nonSolvedWord[index])
 
 		elif problemType == 3:
 			print("Preparing...")
@@ -204,3 +233,6 @@ def main():
 
 if __name__=="__main__":
 	main()
+
+# Weight
+# Sorting word list
