@@ -45,7 +45,7 @@ def search_mean(word):
 def enterDay():
 	day = input("Enter which day: ")
 	try:
-		if answer == "exit":
+		if day == "exit":
 			return "exit"
 		if((int(day) > 30) or (int(day) < 0)):
 			return 0
@@ -55,6 +55,9 @@ def enterDay():
 		return 0
 
 def enterType():
+	print(f"################################")
+	print(f"##########GRE WORD TEST#########")
+	print(f"################################")
 	print(f"1. New word 2. Wrong word 3.Research word(Preparing Service)")
 	print(f"--------------------------")
 	answer = input("Enter which type: ")
@@ -62,10 +65,10 @@ def enterType():
 	try:
 		if answer == "exit":
 			return "exit"
-		if (int(answer) != 1) or (int(answer) != 2):
-			return 0
-		else:
+		if (int(answer) == 1) or (int(answer) == 2):
 			return int(answer)
+		else:
+			return 0
 	except ValueError:
 		return 0
 
@@ -115,6 +118,26 @@ def printProblem(data_list):
 
 	return ans
 
+def printNonSolvedWord(data_dict):
+	if(len(data_dict)):
+		print(f"NON PROBLEM: GREAT JOB!!!")
+		return 0
+	elif(len(data_dict)==1):pNumber = 1
+	else:
+		pNumber = np.random.randint(1, len(data_dict))
+
+	data_list = data_dict[pNumber]
+	print(f"--------QUIZ, DAY {data_list[0][0]}--------")
+	for val in data_list:
+		print(val[1])
+	print(f"---------------------------------------------")
+	while(True):
+		ans = input("YOU KNOW ALL?(y or n): ")
+		if (ans=="y")|(ans=="n"):break
+		else:
+			print("error: wrong input")
+	return ans, data_list
+
 def printAnswer(data_list):
 	print(f"--------Answer, DAY {data_list[0][0]}--------")
 	for val in data_list:
@@ -122,12 +145,12 @@ def printAnswer(data_list):
 	print(f"---------------------------------------------")
 
 def main():
-	#https://realpython.com/python-timer/
+	# https://realpython.com/python-timer/
 	tic = time.perf_counter()
 
 	nonSolvedWord = {}
 	count = 0
-	f = open("./1.txt")
+	f = open("./1.txt",  encoding='utf-8')
 	data = processtxt(f.read())
 
 	while(True):
@@ -155,8 +178,17 @@ def main():
 					printAnswer(problem_list)
 					count = count+1
 		elif problemType == 2:
-			print("HELLO REVEIW WORLD")
-			
+			print("HELLO REVIEW WORLD")
+			answer, data_list = printNonSolvedWord(nonSolvedWord)
+			answer = str(answer)
+
+			if (answer == 'y'):
+				nonSolvedWord[count] = problem_list
+			elif (answer == 'n'):
+				# addWeightWord(nonSolvedWord, index, count)
+				printAnswer(problem_list)
+				count = count + 1
+
 		elif problemType == 3:
 			print("Preparing...")
 		else:
@@ -166,7 +198,7 @@ def main():
 			ansNextStep = input("Next Step?(y or n): ")
 			if(ansNextStep == "exit"):break
 			if(ansNextStep == "y"):break
-			print("Waiting... If you want to next step, then press y")
+			print("We are Waiting for U... If you want to next step, then press y")
 
 		if(ansNextStep == "exit"):break
 
