@@ -1,4 +1,4 @@
-import sys
+import sys, os
 import numpy as np
 from bs4 import BeautifulSoup
 import time
@@ -18,6 +18,10 @@ def search_mean(word):
 	url = urlRef[0]+str(word)+urlRef[1]
 	print(url)
 	# initiating the webdriver. Parameter includes the path of the webdriver.
+	path_driver = './'
+	if "chromedriver.exe" not in os.listdir(path_driver):
+		print("error: install chromedriver")
+		return 0
 	driver = webdriver.Chrome('./chromedriver')
 	driver.get(url)
 
