@@ -160,21 +160,32 @@ def subtractWeightWord(nonSolvedWord, index):
 		nonSolvedWord[index][-1] = nonSolvedWord[index][-1] - 1
 
 def edit_answer(nonSolvedWord):
-	wordtoedit = input("What do you want to edit? ")
-	indexEdit = -1
-	for index, val in enumerate(nonSolvedWord[1][:-1]):
-	 	if(val[1].replace(" ","")==wordtoedit):indexEdit=index
-	if(indexEdit == -1):print("no Word in list...Try again?(1) or pass?(0)")
+	print(f"-------------------------------------")
+	#need to edit printAnswer : Error, KeyError
+	printAnswer(nonSolvedWord)
+	while(True):
+		wordtoedit = input("What do you want to edit? ")
+		indexEdit = -1
+		for index, val in enumerate(nonSolvedWord[1][:-1]):
+		 	if(val[1].replace(" ","")==wordtoedit):indexEdit=index
+		if(indexEdit == -1):
+			print("no Word in list...Try again?(1) or pass?(0)")
+			answer = input()
+			if(int(answer) == 1):continue
+			else:break
+		print(f"-------------------------------------")
+		print(f"{nonSolvedWord[1][indexEdit][1]} -> {nonSolvedWord[1][indexEdit][2]}")
+		print(f"-------------------------------------")
+		print("Mean you want to change:")
+		meantoedit = input()
+		print(f"-------------------------------------")
+		nonSolvedWord[1][indexEdit][2] = meantoedit
+		# -ing
+		print(nonSolvedWord[1][indexEdit])
+		print("Want a more editing? 1(yes) or 0(no)")
+		answer = input()
+		if((int(answer) == 0)):break
 
-	print(f"-------------------------------------")
-	print(f"{nonSolvedWord[1][indexEdit][1]} -> {nonSolvedWord[1][indexEdit][2]}")
-	print(f"-------------------------------------")
-	print("Mean you want to change:")
-	meantoedit = input()
-	print(f"-------------------------------------")
-	nonSolvedWord[1][indexEdit][2] = meantoedit
-	# -ing
-	print(nonSolvedWord[1][indexEdit])
 def main():
 	# https://realpython.com/python-timer/
 	# tic = time.perf_counter()
