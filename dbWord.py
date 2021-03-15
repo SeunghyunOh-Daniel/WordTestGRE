@@ -115,10 +115,12 @@ def export_data(data_list):
 def main():
 	#https://realpython.com/python-timer/
     tic = time.perf_counter()
+
     df = pd.read_excel(data_name, sheet_name=data_sheet)
     words = import_words(df)
     search_means(words)
     export_data(words)
+
     toc = time.perf_counter()
     print(f"Process time in {toc - tic:0.4f} secondes")
 
