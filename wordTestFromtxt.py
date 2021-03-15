@@ -155,6 +155,22 @@ def subtractWeightWord(nonSolvedWord, index):
 	else:
 		nonSolvedWord[index][-1] = nonSolvedWord[index][-1] - 1
 
+def edit_answer(nonSolvedWord):
+	wordtoedit = input("What do you want to edit? ")
+	indexEdit = -1
+	for index, val in enumerate(nonSolvedWord[1][:-1]):
+	 	if(val[1].replace(" ","")==wordtoedit):indexEdit=index
+	if(indexEdit == -1):print("no Word in list...Try again?(1) or pass?(0)")
+
+	print(f"-------------------------------------")
+	print(f"{nonSolvedWord[1][indexEdit][1]} -> {nonSolvedWord[1][indexEdit][2]}")
+	print(f"-------------------------------------")
+	print("Mean you want to change:")
+	meantoedit = input()
+	print(f"-------------------------------------")
+	nonSolvedWord[1][indexEdit][2] = meantoedit
+	# -ing
+	print(nonSolvedWord[1][indexEdit])
 def main():
 	# https://realpython.com/python-timer/
 	# tic = time.perf_counter()
@@ -172,7 +188,7 @@ def main():
 		problemType = enterType()
 
 		if (problemType == "exit"): break
-
+		if (problemType == "cls" or problemType == "clear"):os.system("cls")
 		if problemType == 1:
 
 			if len(nonSolvedWord) > 10:
@@ -180,7 +196,10 @@ def main():
 				problemType = 2
 
 			day = enterDay()
+
 			if (day == "exit"): break
+			if (problemType == "cls" or problemType == "clear"):os.system("cls")
+
 			elif not((day > 0) and (day <= 30)):
 				print(f"error: enter another value")
 
@@ -225,9 +244,15 @@ def main():
 		while(True):
 			ansNextStep = input("Next Step?(y or n): ")
 			if(ansNextStep == "exit"):break
-			if(ansNextStep == "y"):break
+			elif(ansNextStep == "cls" or problemType == "clear"):os.system("cls")
+			elif(ansNextStep == "y"):break
+			elif(ansNextStep == "n"):
+				ansNextStep = input("What do you want to do?(1. edit the answer 2. next step)")
+			if(ansNextStep == "2"):break
+			elif(ansNextStep == "1"):edit_answer(nonSolvedWord)
 			print("We are Waiting for U... If you want to next step, then press y")
 
+		if(ansNextStep == "cls" or problemType == "clear"):os.system("cls")
 		if(ansNextStep == "exit"):break
 
 
