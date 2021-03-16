@@ -160,28 +160,37 @@ def subtractWeightWord(nonSolvedWord, index):
 		nonSolvedWord[index][-1] = nonSolvedWord[index][-1] - 1
 
 def edit_answer(nonSolvedWord):
-	print(f"-------------------------------------")
-	#need to edit printAnswer : Error, KeyError
-	printAnswer(nonSolvedWord)
+	print(f"--------------Problem List---------------")
+	for index, val in enumerate(nonSolvedWord.keys()):
+		print(f"{index+1}. DAY {nonSolvedWord[val][0][0]}")
+	print(f"-----------------------------------------")
+
+	wordtoedit = input("Which number do you want?")
+	# Need to make exceptional case(if enter out of list)
+	index_words = int(wordtoedit)-1
+	index_words = list(nonSolvedWord.keys())[index]
+	# printAnswer(nonSolvedWord[index])
+	print(nonSolvedWord[index_words])
 	while(True):
+		print(f"-------------------------------------")
 		wordtoedit = input("What do you want to edit? ")
 		indexEdit = -1
-		for index, val in enumerate(nonSolvedWord[1][:-1]):
+		for index, val in enumerate(nonSolvedWord[index_words][:-1]):
 		 	if(val[1].replace(" ","")==wordtoedit):indexEdit=index
 		if(indexEdit == -1):
-			print("no Word in list...Try again?(1) or pass?(0)")
+			print("no Word in list...Try again?(1)")
 			answer = input()
 			if(int(answer) == 1):continue
 			else:break
 		print(f"-------------------------------------")
-		print(f"{nonSolvedWord[1][indexEdit][1]} -> {nonSolvedWord[1][indexEdit][2]}")
+		print(f"{nonSolvedWord[index_words][indexEdit][1]} -> {nonSolvedWord[index_words][indexEdit][2]}")
 		print(f"-------------------------------------")
 		print("Mean you want to change:")
 		meantoedit = input()
 		print(f"-------------------------------------")
-		nonSolvedWord[1][indexEdit][2] = meantoedit
+		nonSolvedWord[index_words][indexEdit][2] = meantoedit
 		# -ing
-		print(nonSolvedWord[1][indexEdit])
+		print(nonSolvedWord[index_words][indexEdit])
 		print("Want a more editing? 1(yes) or 0(no)")
 		answer = input()
 		if((int(answer) == 0)):break
