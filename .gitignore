@@ -1,4 +1,5 @@
 *
+!*.numbers
 !*.pdf
 !*.txt
 !*.xlsx
