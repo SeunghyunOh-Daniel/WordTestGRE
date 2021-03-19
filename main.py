@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from __init__ import *
 
 sys.path.append("/Users/seunghyunoh/workplace/Data/")
 data_path = "/Users/seunghyunoh/workplace/Data/wordlist/"
@@ -77,6 +78,39 @@ def makeProblem_txt(data, day):
 			if(numberofword in numRandom):
 				problem_list.append([dayLocal, word, meaning])
 	return problem_list
+
+def processtxt_v2(data):
+	data = data.split('\n')
+	for i in range(len(data)-1):
+		data[i] = data[i].split(',')
+
+	wordlist = []
+	for i in range(len(data)-1):
+		#index, day, numbering, name, mean):
+		word = Word(int(data[i][0]), int(data[i][1]), int(data[i][2]), data[i][3], data[i][4])
+		wordlist.append(word)
+	for i in range(len(wordlist)):
+		# -ing
+		print(i, wordlist[i].__getattr__())
+	return wordlist
+
+def saveWord(data_dict, problem_list, count):
+	data_dict[count] = problem_list
+	data_dict[count].append(1)
+
+def printProblem(data_list):
+	print(f"--------QUIZ, DAY {data_list[0][0]}--------")
+	for val in data_list:
+		print(val[1])
+	print(f"---------------------------------------------")
+	while(True):
+		ans = input("YOU KNOW ALL?(y or n): ")
+		if (ans=="y")|(ans=="n"):break
+		if (ans=="exit"):break
+		else:
+			print("error: wrong input")
+
+	return ans
 
 def processtxt(data):
 	data = data.split('\n')
@@ -202,86 +236,87 @@ def main():
 	nonSolvedWord = {}
 	count = 1
 	f = open("./1.txt",  encoding='utf-8')
-	data = processtxt(f.read())
+	data = processtxt_v2(f.read())
 
-	while(True):
-		print(f"---------------------------------------------")
-		print(f"|		 GRE WORD TEST	 	    |")
-		print(f"---------------------------------------------")
-
-		problemType = enterType()
-
-		if (problemType == "exit"): break
-		if (problemType == "cls" or problemType == "clear"):os.system("cls")
-		if problemType == 1:
-
-			if len(nonSolvedWord) > 10:
-				print(f"Please solve the probelm...")
-				problemType = 2
-
-			day = enterDay()
-
-			if (day == "exit"): break
-			if (problemType == "cls" or problemType == "clear"):os.system("cls")
-
-			elif not((day > 0) and (day <= 30)):
-				print(f"error: enter another value")
-
-			else:
-				problem_list = makeProblem_txt(data, day)
-				answer = printProblem(problem_list)
-				answer = str(answer)
-				if(answer=='exit'):break
-				if(answer=='y'):
-					continue
-				elif(answer=='n'):
-					saveWord(nonSolvedWord, problem_list, count)
-					printAnswer(problem_list)
-					count = count+1
-
-		elif problemType == 2:
-
-			if len(nonSolvedWord) < 1:
-				print(f"NON PROBLEM: GREAT JOB!!!")
-				continue
-
-			print("HELLO REVIEW WORLD")
-
-			ans_list = printNonSolvedWord(nonSolvedWord)
-			answer = ans_list[0]
-			index = ans_list[1]
-			answer = str(answer)
-			if (answer == 'exit'): break
-			elif (answer == 'y'):
-				subtractWeightWord(nonSolvedWord, index)
-				continue
-			elif (answer == 'n'):
-				addWeightWord(nonSolvedWord, index)
-				printAnswer(nonSolvedWord[index])
-
-		elif problemType == 3:
-			word = input("Which word do you want to search: ")
-			print(f"The meaning...{search_mean(word)}")
-		else:
-			print("*error: check the exception in source")
-
-		while(True):
-			ansNextStep = input("Next Step?(y or n): ")
-			if(ansNextStep == "exit"):break
-			elif(ansNextStep == "cls" or problemType == "clear"):os.system("cls")
-			elif(ansNextStep == "y"):break
-			elif(ansNextStep == "n"):
-				ansNextStep = input("What do you want to do?(1. edit the answer 2. next step)")
-			if(ansNextStep == "2"):break
-			elif(ansNextStep == "1"):edit_answer(nonSolvedWord)
-			print("We are Waiting for U... If you want to next step, then press y")
-
-		if(ansNextStep == "cls" or problemType == "clear"):os.system("cls")
-		if(ansNextStep == "exit"):break
-
-
-	# toc = time.perf_counter()
-	# print(f"Process time in {toc - tic:0.4f} secondes")
+	# while(True):
+	# 	print(f"---------------------------------------------")
+	# 	print(f"|		 GRE WORD TEST	 	    |")
+	# 	print(f"---------------------------------------------")
+	#
+	# 	problemType = enterType()
+	#
+	# 	if (problemType == "exit"): break
+	# 	if (problemType == "cls" or problemType == "clear"):os.system("cls")
+	#
+	# 	if problemType == 1:
+	#
+	# 		if len(nonSolvedWord) > 10:
+	# 			print(f"Please solve the probelm...")
+	# 			problemType = 2
+	#
+	# 		day = enterDay()
+	#
+	# 		if (day == "exit"): break
+	# 		if (problemType == "cls" or problemType == "clear"):os.system("cls")
+	#
+	# 		elif not((day > 0) and (day <= 30)):
+	# 			print(f"error: enter another day...day is from 1 to 30....")
+	#
+	# 		else:
+	# 			problem_list = makeProblem_txt(data, day)
+	# 			answer = printProblem(problem_list)
+	# 			answer = str(answer)
+	# 			if(answer=='exit'):break
+	# 			if(answer=='y'):
+	# 				continue
+	# 			elif(answer=='n'):
+	# 				saveWord(nonSolvedWord, problem_list, count)
+	# 				printAnswer(problem_list)
+	# 				count = count+1
+	#
+	# 	elif problemType == 2:
+	#
+	# 		if len(nonSolvedWord) < 1:
+	# 			print(f"NON PROBLEM: GREAT JOB!!!")
+	# 			continue
+	#
+	# 		print("HELLO REVIEW WORLD")
+	#
+	# 		ans_list = printNonSolvedWord(nonSolvedWord)
+	# 		answer = ans_list[0]
+	# 		index = ans_list[1]
+	# 		answer = str(answer)
+	# 		if (answer == 'exit'): break
+	# 		elif (answer == 'y'):
+	# 			subtractWeightWord(nonSolvedWord, index)
+	# 			continue
+	# 		elif (answer == 'n'):
+	# 			addWeightWord(nonSolvedWord, index)
+	# 			printAnswer(nonSolvedWord[index])
+	#
+	# 	elif problemType == 3:
+	# 		word = input("Which word do you want to search: ")
+	# 		print(f"The meaning...{search_mean(word)}")
+	# 	else:
+	# 		print("*error: check the exception in source")
+	#
+	# 	while(True):
+	# 		ansNextStep = input("Next Step?(y or n): ")
+	# 		if(ansNextStep == "exit"):break
+	# 		elif(ansNextStep == "cls" or problemType == "clear"):os.system("cls")
+	# 		elif(ansNextStep == "y"):break
+	# 		elif(ansNextStep == "n"):
+	# 			ansNextStep = input("What do you want to do?(1. edit the answer 2. next step)")
+	# 		if(ansNextStep == "2"):break
+	# 		elif(ansNextStep == "1"):edit_answer(nonSolvedWord)
+	# 		print("We are Waiting for U... If you want to next step, then press y")
+	#
+	# 	if(ansNextStep == "cls" or problemType == "clear"):os.system("cls")
+	# 	if(ansNextStep == "exit"):break
+	#
+	#
+	# # toc = time.perf_counter()
+	# # print(f"Process time in {toc - tic:0.4f} secondes")
 
 if __name__=="__main__":
 	main()
