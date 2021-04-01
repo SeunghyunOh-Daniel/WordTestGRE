@@ -26,6 +26,12 @@ class Node(object):
         if not (mean == 0):
             self.mean = mean
 
+    def print_test(self):
+        print(f"{self.numbering}, {self.name}")
+
+    def print_answer(self):
+        print(f"{self.numbering}, {self.name} -> {self.mean}")
+
 
 class Words(object):
     def __init__(self, day):
@@ -40,8 +46,11 @@ class Words(object):
         self.day = day
         self.wordlist = wordlist
 
+    def add(self, numbering, name, mean):
+        self.wordlist.append(Node(numbering, name, mean))
+
     def edit(self, numbering, name, mean):
-        if self.wordlist == []:
+        if not self.wordlist:
             print("no wordlist in words class")
             return 0
         else:
@@ -52,7 +61,7 @@ class Words(object):
             return 1
 
     def print_test(self):
-        if self.wordlist == []:
+        if not self.wordlist:
             print("no wordlist in words class")
             return 0
         for node in self.wordlist:
@@ -60,7 +69,7 @@ class Words(object):
         return 1
 
     def print_answer(self):
-        if self.wordlist == []:
+        if not self.wordlist:
             print("no wordlist in words class")
             return 0
         for node in self.wordlist:

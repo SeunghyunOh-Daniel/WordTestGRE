@@ -74,17 +74,20 @@ def enterType():
         return 0
 
 
-def makeProblem_txt(data, day):
-    numRandom = np.random.randint(1, 102, 30)
-    problem_list = []
+def make_problem(data, day):
+    day = int(day - 1)
+    day, word_list = data[day].__get__()
 
-    for word in data:
-        index, day = word.getattr()
-        print(index, day)
-    # for index, dayLocal, numberofword, word, meaning in zip(data[index_day].__getattr__()):
-    # 	if(numberofword in numRandom):
-    # 		problem_list.append(data)
-    return problem_list
+    problems = Words(day)
+    num_random = np.random.randint(1, len(word_list) - 1, 30)
+
+    for node in word_list:
+        numbering, name, mean = node.__get__()
+
+        if int(numbering) in num_random:
+            problems.add(numbering, name, mean)
+
+    return problems
 
 
 def process_txt_v2(data):
@@ -98,39 +101,48 @@ def process_txt_v2(data):
     data_edit = {}
     for value_list in data:
         if not int(value_list[0].replace(" ", "")) in data_edit.keys():
-            data_edit[int(value_list[0])] = value_list[1:]
+            data_edit[int(value_list[0])] = []
+            data_edit[int(value_list[0])].append(value_list[1:])
         else:
             data_edit[int(value_list[0])].append(value_list[1:])
+    # print(data_edit[1])
+    words = []
+    for key in data_edit.keys():
+        words_day = Words(key)
 
-    word_list = []
-    # for value_list in data:
-    # 	print(value_list)
-    # 	word = Words(int(data[i][0]), int(data[i][1]), int(data[i][2]), data[i][3], data[i][4])
-    # 	wordlist.append(word)
-    # [ Word(), Word() ... , Word() ]
+        data_list = data_edit[key]
+        for data_node in data_list:
+            words_day.add(data_node[0], data_node[1], data_node[2])
 
-    # Debug
-    # for i in range(len(wordlist)):
-    # 	index, day, numbering, name, mean = wordlist[i].__getattr__()
-    # 	print(index, day, numbering, name, mean)
+        words.append(words_day)
 
-    return wordlist
+    # words =  [ Word(day_1), Word(day_2) ... , Word(day_30) ]
 
+    # # Debug
+    # for word_list in words:
+    #     word_list.print_answer()
 
-def saveWord(data_dict, problem_list, count):
-    data_dict[count] = problem_list
-    data_dict[count].append(1)
+    return words
 
 
-def printProblem(data_list):
-    print(f"--------QUIZ, DAY {data_list[0][0]}--------")
-    for val in data_list:
-        print(val[1])
+def save_problem(data_list, problems):
+    weight = 1
+    data_list.append([problems, weight])
+
+
+def test_problem(data):
+    day, word_list = data.__get__()
+
+    print(f"--------QUIZ, DAY {day}--------")
+    for val in word_list:
+        print(val.name)
     print(f"---------------------------------------------")
-    while (True):
+
+    while True:
         ans = input("YOU KNOW ALL?(y or n): ")
-        if (ans == "y") | (ans == "n"): break
-        if (ans == "exit"):
+        if (ans == "y") | (ans == "n"):
+            break
+        if ans == "exit":
             break
         else:
             print("error: wrong input")
@@ -180,31 +192,29 @@ def printProblem(data_list):
     return ans
 
 
-def printNonSolvedWord(data_dict):
-    if (len(data_dict) == 0):
+def print_problems_failed(data):
+    if len(data) == 0:
         return 0
-    elif (len(data_dict) == 1):
-        pNumber = 1
+    elif len(data) == 1:
+        p_number = 1
     else:
-        pNumber = np.random.randint(1, len(data_dict))
+        p_number = np.random.randint(1, len(data))
 
-    data_list = data_dict[pNumber]
+    problem = data[p_number][0]
+    day, word_list = problem.__get__()
 
-    print(f"--------QUIZ, DAY {data_list[0][0]}--------")
-    for val in data_list:
-        if (type(val) == int): continue
-        print(val[1])
+    print(f"--------QUIZ, DAY {day}--------")
+    problem.print_test()
     print(f"---------------------------------------------")
 
-    while (True):
+    while True:
         ans = input("YOU KNOW ALL?(y or n): ")
-        if (ans == "y") | (ans == "n"): break
-        if (ans == "exit"):
+        if ans == "y" | ans == "n" | ans == "exit":
             break
         else:
             print("error: wrong input")
 
-    return [ans, pNumber]
+    return ans, p_number
 
 
 def printAnswer(data_list):
@@ -215,154 +225,159 @@ def printAnswer(data_list):
     print(f"---------------------------------------------")
 
 
-def addWeightWord(data_dict, index):
-    data_dict[index][-1] = data_dict[index][-1] + 1
+def add_word_weight(data_list, index):
+    data_list[index][-1] = data_list[index][-1] + 1
 
 
-def removeWord(data_dict, index):
-    del data_dict[index]
+def remove_problem(data_list, index):
+    del data_list[index]
 
 
-def subtractWeightWord(nonSolvedWord, index):
-    if (nonSolvedWord[index][-1] == 1):
-        removeWord(nonSolvedWord, index)
+def subtract_word_weight(problems_failed, index):
+    if problems_failed[index][-1] < 1:
+        print(f"error: out of range in problem list")
+    if problems_failed[index][-1] == 1:
+        remove_problem(problems_failed, index)
     else:
-        nonSolvedWord[index][-1] = nonSolvedWord[index][-1] - 1
+        problems_failed[index][-1] = problems_failed[index][-1] - 1
 
 
 def edit_answer(nonSolvedWord):
-    print(f"--------------Problem List---------------")
-    for index, val in enumerate(nonSolvedWord.keys()):
-        print(f"{index + 1}. DAY {nonSolvedWord[val][0][0]}")
-    print(f"-----------------------------------------")
+    while True:
+        print(f"--------------Problem List---------------")
+        for word in nonSolvedWord[0].wordlist:
+            word.print_answer()
+        print(f"-----------------------------------------")
 
-    wordtoedit = input("Which number do you want?")
-    # Need to make exceptional case(if enter out of list)
-    index_words = int(wordtoedit) - 1
-    index_words = list(nonSolvedWord.keys())[index]
-    # printAnswer(nonSolvedWord[index])
-    print(nonSolvedWord[index_words])
-    while (True):
-        print(f"-------------------------------------")
-        wordtoedit = input("What do you want to edit? ")
-        indexEdit = -1
-        for index, val in enumerate(nonSolvedWord[index_words][:-1]):
-            if (val[1].replace(" ", "") == wordtoedit): indexEdit = index
-        if (indexEdit == -1):
-            print("no Word in list...Try again?(1)")
-            answer = input()
-            if (int(answer) == 1):
-                continue
-            else:
-                break
-        print(f"-------------------------------------")
-        print(f"{nonSolvedWord[index_words][indexEdit][1]} -> {nonSolvedWord[index_words][indexEdit][2]}")
-        print(f"-------------------------------------")
-        print("Mean you want to change:")
-        meantoedit = input()
-        print(f"-------------------------------------")
-        nonSolvedWord[index_words][indexEdit][2] = meantoedit
-        # -ing
-        print(nonSolvedWord[index_words][indexEdit])
-        print("Want a more editing? 1(yes) or 0(no)")
-        answer = input()
-        if ((int(answer) == 0)): break
+        index_edit = input("Which number do you want? ")
+        for word in nonSolvedWord[0].wordlist:
+            print(word.numbering)
+            if int(word.numbering) == int(index_edit):
+                print(f"-------------------------------------")
+                mean_edit = input("Mean you want to change: ")
+                word.mean = mean_edit
+                print(f"{word.numbering}, {word.name} -> {word.mean}")
+                print(f"Saved")
+
+        answer = input("Want a more editing? 1(yes) or 0(no): ")
+        if int(answer) == 0:
+            break
+        else:
+            continue
 
 
 def main():
     # https://realpython.com/python-timer/
     # tic = time.perf_counter()
 
-    nonSolvedWord = {}
-    nonSolvedWord_v2 = []
-    count = 1
+    nonSolvedWord = []
     f = open("./1.txt", encoding='utf-8')
     data = process_txt_v2(f.read())
 
+    while True:
+        print(f"---------------------------------------------")
+        print(f"|		        GRE WORD TEST	    	    |")
+        print(f"---------------------------------------------")
 
-# while(True):
-# 	print(f"---------------------------------------------")
-# 	print(f"|		 GRE WORD TEST	 	    |")
-# 	print(f"---------------------------------------------")
-#
-# 	problemType = enterType()
-#
-# 	if (problemType == "exit"): break
-# 	if (problemType == "cls" or problemType == "clear"):os.system("cls")
-#
-# 	if problemType == 1:
-#
-# 		if len(nonSolvedWord) > 10:
-# 			print(f"Please solve the probelm...")
-# 			problemType = 2
-#
-# 		day = enterDay()
-#
-# 		# Exit command
-# 		if (day == "exit"): break
-#
-# 		# Clear command
-# 		if (problemType == "cls" or problemType == "clear"):os.system("cls")
-#
-# 		# Exception Error for day 1-30
-# 		elif not((day > 0) and (day <= 30)):
-# 			print(f"error: enter another day...day is from 1 to 30....")
-#
-# 		# Execute
-# 		else:
-# 			problem_list = makeProblem_txt(data, day)
-# 			answer = printProblem(problem_list)
-# 			answer = str(answer)
-# 			if(answer=='exit'):break
-# 			if(answer=='y'):continue
-# 			elif(answer=='n'):
-# 				saveWord(nonSolvedWord, problem_list, count)
-# 				printAnswer(problem_list)
-# 				count = count+1
-#
-# 	elif problemType == 2:
-#
-# 		if len(nonSolvedWord) < 1:
-# 			print(f"NON PROBLEM: GREAT JOB!!!")
-# 			continue
-#
-# 		print("HELLO REVIEW WORLD")
-#
-# 		ans_list = printNonSolvedWord(nonSolvedWord)
-# 		answer = ans_list[0]
-# 		index = ans_list[1]
-# 		answer = str(answer)
-# 		if (answer == 'exit'): break
-# 		elif (answer == 'y'):
-# 			subtractWeightWord(nonSolvedWord, index)
-# 			continue
-# 		elif (answer == 'n'):
-# 			addWeightWord(nonSolvedWord, index)
-# 			printAnswer(nonSolvedWord[index])
-#
-# 	elif problemType == 3:
-# 		word = input("Which word do you want to search: ")
-# 		print(f"The meaning...{search_mean(word)}")
-# 	else:
-# 		print("*error: check the exception in source")
-#
-# 	while(True):
-# 		ansNextStep = input("Next Step?(y or n): ")
-# 		if(ansNextStep == "exit"):break
-# 		elif(ansNextStep == "cls" or problemType == "clear"):os.system("cls")
-# 		elif(ansNextStep == "y"):break
-# 		elif(ansNextStep == "n"):
-# 			ansNextStep = input("What do you want to do?(1. edit the answer 2. next step)")
-# 		if(ansNextStep == "2"):break
-# 		elif(ansNextStep == "1"):edit_answer(nonSolvedWord)
-# 		print("We are Waiting for U... If you want to next step, then press y")
-#
-# 	if(ansNextStep == "cls" or problemType == "clear"):os.system("cls")
-# 	if(ansNextStep == "exit"):break
-#
-#
-# # toc = time.perf_counter()
-# # print(f"Process time in {toc - tic:0.4f} secondes")
+        current_index = 0
+        problemType = enterType()
+
+        if problemType == "exit":
+            break
+        if problemType == "cls" or problemType == "clear":
+            os.system("cls")
+
+        if problemType == 1:
+
+            if len(nonSolvedWord) > 10:
+                print(f"Please solve the problem...")
+                problemType = 2
+
+            day = enterDay()
+
+            # Exit command
+            if day == "exit":
+                break
+
+            # Clear command
+            if problemType == "cls" or problemType == "clear":
+                os.system("cls")
+
+            # Exception Error for day 1-30
+            elif not ((day > 0) and (day <= 30)):
+                print(f"error: enter another day...day is from 1 to 30....")
+
+            else:
+                problems = make_problem(data, day)
+                answer = test_problem(problems)
+                answer = str(answer)
+                if answer == 'exit':
+                    break
+                if answer == 'y':
+                    continue
+                elif answer == 'n':
+                    save_problem(nonSolvedWord, problems)
+                    problems.print_answer()
+
+
+        elif problemType == 2:
+            if len(nonSolvedWord) < 1:
+                print(f"NON PROBLEM: GREAT JOB!!!")
+                continue
+            else:
+                print("HELLO REVIEW WORLD")
+                # editing...
+                answer, index = print_problems_failed(nonSolvedWord)
+                current_index = index
+                answer = str(answer)
+                if answer == 'exit':
+                    break
+                elif answer == 'y':
+                    subtract_word_weight(nonSolvedWord, index)
+                    continue
+                elif answer == 'n':
+                    add_word_weight(nonSolvedWord, index)
+                    nonSolvedWord[index][0].print_answer()
+
+        elif problemType == 3:
+            word = input("Which word do you want to search: ")
+            print(f"The meaning...{search_mean(word)}")
+
+        else:
+            print("*error: check the exception in source")
+
+        ###
+
+        # -ing
+        while True:
+            answer_next = input("Next Step?(y or n): ")
+
+            if answer_next == "exit":
+                break
+
+            elif answer_next == "cls" or problemType == "clear":
+                os.system("cls")
+
+            elif answer_next == "y":
+                break
+
+            elif answer_next == "n":
+                answer_next = input("What do you want to do?(1. edit the answer 2. next step)")
+                if answer_next == "2":
+                    break
+                elif answer_next == "1":
+                    edit_answer(nonSolvedWord[current_index])
+
+            print("We are Waiting for U... If you want to next step, then press y")
+
+        if answer_next == "cls" or problemType == "clear":
+            os.system("cls")
+        if answer_next == "exit":
+            break
+
+    # toc = time.perf_counter()
+    # print(f"Process time in {toc - tic:0.4f} secondes")
+
 
 if __name__ == "__main__":
     main()
