@@ -196,10 +196,9 @@ def print_problems_failed(data):
     if len(data) == 0:
         return 0
     elif len(data) == 1:
-        p_number = 1
+        p_number = 0
     else:
-        p_number = np.random.randint(1, len(data))
-
+        p_number = np.random.randint(0, len(data))
     problem = data[p_number][0]
     day, word_list = problem.__get__()
 
@@ -209,7 +208,7 @@ def print_problems_failed(data):
 
     while True:
         ans = input("YOU KNOW ALL?(y or n): ")
-        if ans == "y" | ans == "n" | ans == "exit":
+        if (ans == "y") | (ans == "n") | (ans == "exit"):
             break
         else:
             print("error: wrong input")
@@ -251,7 +250,6 @@ def edit_answer(nonSolvedWord):
 
         index_edit = input("Which number do you want? ")
         for word in nonSolvedWord[0].wordlist:
-            print(word.numbering)
             if int(word.numbering) == int(index_edit):
                 print(f"-------------------------------------")
                 mean_edit = input("Mean you want to change: ")
@@ -326,7 +324,6 @@ def main():
                 continue
             else:
                 print("HELLO REVIEW WORLD")
-                # editing...
                 answer, index = print_problems_failed(nonSolvedWord)
                 current_index = index
                 answer = str(answer)
@@ -346,9 +343,6 @@ def main():
         else:
             print("*error: check the exception in source")
 
-        ###
-
-        # -ing
         while True:
             answer_next = input("Next Step?(y or n): ")
 
@@ -367,6 +361,7 @@ def main():
                     break
                 elif answer_next == "1":
                     edit_answer(nonSolvedWord[current_index])
+                    break
 
             print("We are Waiting for U... If you want to next step, then press y")
 

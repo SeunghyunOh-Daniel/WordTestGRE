@@ -65,7 +65,7 @@ class Words(object):
             print("no wordlist in words class")
             return 0
         for node in self.wordlist:
-            print(f"DAY{node.day}, {node.numbering}, {node.name}")
+            print(f"DAY{self.day}, {node.numbering}, {node.name}")
         return 1
 
     def print_answer(self):
