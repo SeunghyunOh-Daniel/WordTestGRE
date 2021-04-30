@@ -13,6 +13,15 @@ data_sheet = "표제어 list"
 data_result = "result/result.txt"
 
 
+def screen_clear():
+    # for mac and linux(here, os.name is 'posix')
+    if os.name == 'posix':
+        _ = os.system('clear')
+    else:
+        # for windows platfrom
+        _ = os.system('cls')
+
+
 def search_mean(word):
     # Ref. https://greeksharifa.github.io/references/2020/10/30/python-selenium-usage/
 
@@ -132,22 +141,32 @@ def save_problem(data_list, problems):
 
 def test_problem(data):
     day, word_list = data.__get__()
-
+    user_answer_list = Words(day)
     print(f"--------QUIZ, DAY {day}--------")
-    for val in word_list:
-        print(val.name)
+
+    for index, val in enumerate(word_list):
+        print(f"YOU KNOW? 1.YES 2.NO 3.PASS\n"
+              f"{index + 1}. {val.name}")
+        user_answer = input("Answer: ")
+        if user_answer == "exit":
+            return None
+        elif user_answer == "2":
+            user_answer_list.wordlist.append(word_list[index])
+        else:
+            pass
+        print()
     print(f"---------------------------------------------")
 
-    while True:
-        ans = input("YOU KNOW ALL?(y or n): ")
-        if (ans == "y") | (ans == "n"):
-            break
-        if ans == "exit":
-            break
-        else:
-            print("error: wrong input")
+    # while True:
+    #     ans = input("YOU KNOW ALL?(y or n): ")
+    #     if (ans == "y") | (ans == "n"):
+    #         break
+    #     if ans == "exit":
+    #         break
+    #     else:
+    #         print("error: wrong input")
 
-    return ans
+    return user_answer_list
 
 
 def processtxt(data):
@@ -219,7 +238,7 @@ def print_problems_failed(data):
 def printAnswer(data_list):
     print(f"--------Answer, DAY {data_list[0][0]}--------")
     for val in data_list:
-        if (type(val) == int): continue
+        if type(val) == int: continue
         print(f"{val[1]} -> {val[2]}")
     print(f"---------------------------------------------")
 
@@ -307,16 +326,13 @@ def main():
 
             else:
                 problems = make_problem(data, day)
-                answer = test_problem(problems)
-                answer = str(answer)
-                if answer == 'exit':
-                    break
-                if answer == 'y':
+                user_answer_list = test_problem(problems)
+                # answer = str(answer)
+                if user_answer_list is None:
                     continue
-                elif answer == 'n':
-                    save_problem(nonSolvedWord, problems)
-                    problems.print_answer()
-
+                else:
+                    save_problem(nonSolvedWord, user_answer_list)
+                    user_answer_list.print_answer()
 
         elif problemType == 2:
             if len(nonSolvedWord) < 1:
@@ -335,6 +351,8 @@ def main():
                 elif answer == 'n':
                     add_word_weight(nonSolvedWord, index)
                     nonSolvedWord[index][0].print_answer()
+                    # for word in nonSolvedWord[index][0]:
+                    #     word.print_answer()
 
         elif problemType == 3:
             word = input("Which word do you want to search: ")
