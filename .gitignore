@@ -5,3 +5,4 @@
 !*.xlsx
 !*.py
 !.gitignore
+!/wordtest_light_version
